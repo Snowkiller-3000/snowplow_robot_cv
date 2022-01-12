@@ -2,9 +2,7 @@ import numpy as np
 import imutils
 import cv2
 
-VISUALIZE = True
 OVERLAP_THRESHOLD = 15
-
 
 def templateMatching(image, template, rectangles, tW, tH):
 
