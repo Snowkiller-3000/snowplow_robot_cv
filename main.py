@@ -2,6 +2,7 @@ import sys
 import os
 import cv2 as cv
 import numpy as np
+import match as boundingBoxes
 
 from ColorDictHSV import color_dict_HSV
 
@@ -37,8 +38,14 @@ def main(argv):
         show_wait_destroy("src", src)
 
         # find pylons
-        detect_markers(src)
+        filteredImg = detect_markers(src)
+        pos_markers = boundingBoxes.buildBoundingBoxes(filteredImg, templatePath= 'assets/template.png', visualize= False)
 
+
+        for startX, startY, endX, endY in pos_markers:
+            cv.rectangle(src, (startX, startY), (endX, endY), (0, 0, 255), 2)
+
+        show_wait_destroy("prediction", src)
         # draw path
 
 
@@ -56,13 +63,14 @@ def detect_markers(img):
     mask_red2 = cv.inRange(hsv, np.array(color_dict_HSV["red2"][LOW]), np.array(color_dict_HSV["red2"][HIGH]))
     mask_red = cv.bitwise_or(mask_red1, mask_red2)
     reds = cv.bitwise_and(img, img, mask=mask_red)
+    
 
     # check edges
     edges = cv.Canny(reds, 200, 400)
     show_wait_destroy("mask", mask_red)
     show_wait_destroy("edges", edges)
-    final_image = edges
-    return final_image
+    final_image = mask_red
+    return cv.cvtColor(final_image, cv.COLOR_GRAY2BGR)
 
 
 if __name__ == "__main__":

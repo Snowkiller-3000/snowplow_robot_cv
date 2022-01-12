@@ -51,24 +51,17 @@ def mergeBoxes(rectangles):
     return rectangles
 
 
-def buildBoundingBoxes(imagePath = 'images/check.png' , templatePath = 'check.png', visualize = True):
+def buildBoundingBoxes(img, templatePath = 'assets/template.png', visualize = True):
     
-    image = cv2.imread(imagePath)
+    image = img 
     template = cv2.imread(templatePath)
     template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     template = cv2.Canny(template, 50, 200)
     (tH, tW) = template.shape[:2]
-    cv2.imshow("Template", template)
+    #cv2.imshow("Template", template)
 
     rectangles = []
     templateMatching(image, template, rectangles, tW, tH)
     mergeBoxes(rectangles)
 
-    if visualize:
-        for startX, startY, endX, endY in rectangles:
-            cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-            cv2.imshow("Image", image)
-        cv2.waitKey(0)
-
     return rectangles
-
