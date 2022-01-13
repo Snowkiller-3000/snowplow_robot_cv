@@ -2,9 +2,13 @@ import sys
 import os
 import cv2 as cv
 import numpy as np
-import match as boundingBoxes
+import templateMatching as boundingBoxes
 
 from ColorDictHSV import color_dict_HSV
+
+
+LOW = 1
+HIGH = 0
 
 
 def show_wait_destroy(winname, img):
@@ -46,13 +50,6 @@ def main(argv):
             cv.rectangle(src, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
         show_wait_destroy("prediction", src)
-        # draw path
-
-
-
-LOW = 1
-HIGH = 0
-
 
 def detect_markers(img):
     # convert image to hsv-space
