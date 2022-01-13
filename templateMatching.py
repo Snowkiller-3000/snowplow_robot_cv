@@ -2,7 +2,7 @@ import numpy as np
 import imutils
 import cv2
 
-OVERLAP_THRESHOLD = 15
+OVERLAP_THRESHOLD = 0.3 #30% area overlap mains they are the same box
 
 def templateMatching(image, template, rectangles, tW, tH):
 
@@ -21,19 +21,22 @@ def templateMatching(image, template, rectangles, tW, tH):
         rectangles.append((int(maxLoc[0] * r), int(maxLoc[1] * r),
                         int((maxLoc[0] + tW) * r),  int((maxLoc[1] + tH) * r)))
         
+
+        
 def doesOverlap(box1, box2):
    startX_1, startY_1, endX_1, endY_1 = box1
    startX_2, startY_2, endX_2, endY_2 = box2
+   #coordinates follow specific format:
+   # startX_1, startY_1 -> Top left corner
+   # endX_1, endY_1 -> Bottom right corner
+   x_left = max(startX_1,startX_2)
+   y_top = max(startY_1, startY_2)
+   x_right = min(endX_1, endX_2)
+   y_bottom = min(endY_1, endY_2)
+   
+   return ((x_right - x_left + 1) * (y_bottom - y_top + 1)) > 0.3 #+1 added for mathematical offset
 
-   X_CONDITION = (startX_2 >= startX_1 or abs(startX_2 - startX_1) <= OVERLAP_THRESHOLD) and (endX_2 <= endX_1 or abs(endX_2-endX_1) <= OVERLAP_THRESHOLD)
-
-   Y_CONDITION = (startY_2 >= startY_1 or abs(startY_2 - startY_1) <= OVERLAP_THRESHOLD) and (endY_2 <= endY_1 or abs(endY_2-endY_1) <= OVERLAP_THRESHOLD)
-
-   if X_CONDITION and Y_CONDITION:
-       return True
-
-   return False
-
+#implement area intersection % threshold
 def mergeBoxes(rectangles):
     rectangles.sort()
 
